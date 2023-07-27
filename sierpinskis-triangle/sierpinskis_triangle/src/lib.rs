@@ -1,5 +1,6 @@
 mod utils;
 
+use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::console;
@@ -11,12 +12,11 @@ extern "C" {
 
 #[wasm_bindgen]
 pub fn greet() {
-    alert("Hello, walk-the-dog!");
+    alert("Hello, Rust WASM world!!");
 }
 
 #[wasm_bindgen]
 pub fn draw_triangle() -> Result<(), JsValue> {
-    console_error_panic_hook::set_once();
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
     let canvas = document
@@ -44,7 +44,7 @@ pub fn draw_triangle() -> Result<(), JsValue> {
 
 #[wasm_bindgen(start)]
 pub fn main() -> Result<(), JsValue> {
-    console_error_panic_hook::set_once();
+    set_panic_hook();
     console::log_1(&JsValue::from_str("Hello, WASM world!"));
     Ok(())
 }
