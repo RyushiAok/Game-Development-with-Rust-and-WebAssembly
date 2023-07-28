@@ -16,7 +16,11 @@ pub fn greet() {
     alert("Hello, Rust WASM world!!");
 }
 
-fn sierpinski(draw_triangle: &dyn Fn([(f64, f64); 3]) -> (), points: [(f64, f64); 3], depth: u32) {
+fn sierpinski(
+    draw_triangle: &mut dyn (FnMut([(f64, f64); 3]) -> ()),
+    points: [(f64, f64); 3],
+    depth: u32,
+) {
     if depth == 0 {
         draw_triangle(points);
     } else {
@@ -30,7 +34,11 @@ fn sierpinski(draw_triangle: &dyn Fn([(f64, f64); 3]) -> (), points: [(f64, f64)
     }
 }
 
-fn draw_triangle(ctx: &web_sys::CanvasRenderingContext2d, points: [(f64, f64); 3]) {
+fn draw_triangle(
+    ctx: &web_sys::CanvasRenderingContext2d,
+    points: [(f64, f64); 3],
+    rgb: Option<(u32, u32, u32)>,
+) {
     let [top, left, right] = points;
     ctx.move_to(top.0, top.1);
     ctx.begin_path();
@@ -39,8 +47,10 @@ fn draw_triangle(ctx: &web_sys::CanvasRenderingContext2d, points: [(f64, f64); 3
     ctx.line_to(top.0, top.1);
     ctx.close_path();
     ctx.stroke();
-    // ctx.fill();
+    rgb.map(|(r, g, b)| ctx.set_fill_style(&JsValue::from_str(&format!("rgb({},{},{})", r, g, b))));
+    ctx.fill();
 }
+
 #[wasm_bindgen]
 pub fn draw_sierpinski_triangle() -> Result<(), JsValue> {
     let window = web_sys::window().unwrap();
@@ -56,8 +66,16 @@ pub fn draw_sierpinski_triangle() -> Result<(), JsValue> {
         .unwrap()
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap();
+    let mut rng = rand::thread_rng();
     sierpinski(
-        &|points| draw_triangle(&context, points),
+        &mut |points| {
+            let color = (
+                rng.gen_range(0..255),
+                rng.gen_range(0..255),
+                rng.gen_range(0..255),
+            );
+            draw_triangle(&context, points, Some(color))
+        },
         [
             (canvas.width() as f64 / 2., 0.),
             (0., canvas.height() as f64),
