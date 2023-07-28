@@ -1,4 +1,8 @@
 {
   "folders": [{ "path": "." }, { "path": "./sierpinskis-triangle" }],
-  "settings": {}
+  "settings": {
+    "rust-analyzer.linkedProjects": [
+      "sierpinskis-triangle/sierpinskis_triangle/Cargo.toml"
+    ]
+  }
 }
