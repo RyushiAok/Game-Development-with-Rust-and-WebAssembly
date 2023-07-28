@@ -1,5 +1,6 @@
 mod utils;
 
+use rand::Rng;
 use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -15,8 +16,33 @@ pub fn greet() {
     alert("Hello, Rust WASM world!!");
 }
 
+fn sierpinski(draw_triangle: &dyn Fn([(f64, f64); 3]) -> (), points: [(f64, f64); 3], depth: u32) {
+    if depth == 0 {
+        draw_triangle(points);
+    } else {
+        let [top, left, right] = points;
+        let left_mid = ((top.0 + left.0) / 2., (top.1 + left.1) / 2.);
+        let right_mid = ((top.0 + right.0) / 2., (top.1 + right.1) / 2.);
+        let bottom_mid = ((left.0 + right.0) / 2., (left.1 + right.1) / 2.);
+        sierpinski(draw_triangle, [top, left_mid, right_mid], depth - 1);
+        sierpinski(draw_triangle, [left_mid, left, bottom_mid], depth - 1);
+        sierpinski(draw_triangle, [right_mid, bottom_mid, right], depth - 1);
+    }
+}
+
+fn draw_triangle(ctx: &web_sys::CanvasRenderingContext2d, points: [(f64, f64); 3]) {
+    let [top, left, right] = points;
+    ctx.move_to(top.0, top.1);
+    ctx.begin_path();
+    ctx.line_to(left.0, left.1);
+    ctx.line_to(right.0, right.1);
+    ctx.line_to(top.0, top.1);
+    ctx.close_path();
+    ctx.stroke();
+    // ctx.fill();
+}
 #[wasm_bindgen]
-pub fn draw_triangle() -> Result<(), JsValue> {
+pub fn draw_sierpinski_triangle() -> Result<(), JsValue> {
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
     let canvas = document
@@ -24,21 +50,21 @@ pub fn draw_triangle() -> Result<(), JsValue> {
         .unwrap()
         .dyn_into::<web_sys::HtmlCanvasElement>()
         .unwrap();
-
     let context = canvas
         .get_context("2d")
         .unwrap()
         .unwrap()
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap();
-    context.move_to(300., 0.);
-    context.begin_path();
-    context.line_to(0.0, 600.0);
-    context.line_to(600.0, 600.0);
-    context.line_to(300.0, 0.0);
-    context.close_path();
-    context.stroke();
-    context.fill();
+    sierpinski(
+        &|points| draw_triangle(&context, points),
+        [
+            (canvas.width() as f64 / 2., 0.),
+            (0., canvas.height() as f64),
+            (canvas.width() as f64, canvas.height() as f64),
+        ],
+        7,
+    );
     Ok(())
 }
 
