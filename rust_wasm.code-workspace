@@ -6,7 +6,8 @@
   ],
   "settings": {
     "rust-analyzer.linkedProjects": [
-      "sierpinskis-triangle/sierpinskis_triangle/Cargo.toml"
+      "sierpinskis-triangle/sierpinskis_triangle/Cargo.toml",
+      "walk-the-dog/walk_the_dog/Cargo.toml"
     ]
   }
 }
