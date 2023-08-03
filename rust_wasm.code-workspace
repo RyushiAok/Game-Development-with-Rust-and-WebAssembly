@@ -1,5 +1,9 @@
 {
-  "folders": [{ "path": "." }, { "path": "./sierpinskis-triangle" }],
+  "folders": [
+    { "path": "." },
+    { "path": "./sierpinskis-triangle" },
+    { "path": "./walk-the-dog" }
+  ],
   "settings": {
     "rust-analyzer.linkedProjects": [
       "sierpinskis-triangle/sierpinskis_triangle/Cargo.toml"
