@@ -1,4 +1,12 @@
 # https://github.com/sagiegurari/cargo-make
 [tasks.build-wasm]
 command = "wasm-pack"
-args = ["build", "--target", "web", "--out-dir", "pkg"]
+args = [
+    "build",
+    "--target",
+    "web",
+    "--out-dir",
+    "../client/src/lib/wasm",
+    "--out-name",
+    "wasm",
+]

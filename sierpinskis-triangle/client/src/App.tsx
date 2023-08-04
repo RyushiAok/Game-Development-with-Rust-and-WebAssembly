@@ -1,8 +1,5 @@
+import init, { draw_sierpinski_triangle, greet } from "@/lib/wasm";
 import { useEffect } from "react";
-import init, {
-  draw_sierpinski_triangle,
-  greet,
-} from "~/sierpinskis_triangle/pkg";
 import "./App.css";
 
 function App() {
