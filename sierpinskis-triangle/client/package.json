@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "run-s build:* && tsc && vite build",
-    "build:wasm": "cd sierpinskis_triangle && cargo make build-wasm && cd ..",
+    "build:wasm": "cd ../sierpinskis_triangle && cargo make build-wasm && cd ../client",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
