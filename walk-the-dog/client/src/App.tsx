@@ -1,35 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import init, { draw_sierpinski_triangle, greet } from "@/lib/wasm";
+import { useEffect } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  useEffect(() => {
+    init();
+  }, []);
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <h1>Vite + React + WASM</h1>
+      <div
+        className="card"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "1rem",
+        }}
+      >
+        <div>
+          <button onClick={() => greet()}>greet</button>
+        </div>
+        <div>
+          <button onClick={() => draw_sierpinski_triangle()}>draw</button>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <canvas id="canvas" tabIndex={0} height={600} width={600}>
+        Your browser doesn't support canvas.
+      </canvas>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

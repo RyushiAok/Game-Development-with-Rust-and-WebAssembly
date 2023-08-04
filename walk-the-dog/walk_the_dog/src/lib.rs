@@ -51,8 +51,10 @@ fn draw_triangle(
     ctx.fill();
 }
 
-#[wasm_bindgen]
-pub fn draw_sierpinski_triangle() -> Result<(), JsValue> {
+fn get_canvas() -> (
+    web_sys::HtmlCanvasElement,
+    web_sys::CanvasRenderingContext2d,
+) {
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
     let canvas = document
@@ -66,6 +68,12 @@ pub fn draw_sierpinski_triangle() -> Result<(), JsValue> {
         .unwrap()
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap();
+    return (canvas, context);
+}
+
+#[wasm_bindgen]
+pub fn draw_sierpinski_triangle() -> Result<(), JsValue> {
+    let (canvas, context) = get_canvas();
     let mut rng = rand::thread_rng();
     sierpinski(
         &mut |points| {
@@ -90,5 +98,12 @@ pub fn draw_sierpinski_triangle() -> Result<(), JsValue> {
 pub fn main() -> Result<(), JsValue> {
     set_panic_hook();
     console::log_1(&JsValue::from_str("Hello, WASM world!"));
+    let image = web_sys::HtmlImageElement::new().unwrap();
+    let (_, context) = get_canvas();
+    let callback = Closure::once(|| web_sys::console::log_1(&JsValue::from_str("loaded image!")));
+    image.set_src("Idle (1).png");
+    image.set_onload(Some(callback.as_ref().unchecked_ref()));
+    context.draw_image_with_html_image_element(&image, 0., 0.)?;
+    callback.forget();
     Ok(())
 }
